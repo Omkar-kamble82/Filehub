@@ -1,4 +1,4 @@
-import { handleAuth } from "../firebase/functions"
+import { Login } from "../firebase/functions"
 
 const Homebanner = () => {
 
@@ -20,7 +20,7 @@ const Homebanner = () => {
             <div className="mt-2 flex flex-wrap justify-center gap-4">
                 <button
                 className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-[white] shadow hover:opacity-90 transition-all hover:duration-700 focus:outline-none focus:ring active:bg-primary-500 sm:w-auto"
-                onClick={handleAuth}
+                onClick={Login}
                 >
                 Get Started
                 </button>

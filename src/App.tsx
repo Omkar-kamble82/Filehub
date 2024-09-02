@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Project from "./pages/Project";
+import Not_found from "./pages/Not_found";
 
 
 function App() {
@@ -28,7 +29,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/projects" element={<Createproject />} />
-          <Route path="/project/:id" element={<Project />} />
+          <Route path={`/project/:id`} element={<Project />} />
+          <Route path="*" element={<Not_found />} />
+
         </Routes>
     </div>
   )
