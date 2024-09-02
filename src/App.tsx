@@ -1,12 +1,12 @@
-
+import Homepage from "./components/Homepage"
+import Navbar from "./components/Navbar"
 function App() {
 
   return (
-    <>
-      <h1 className="text-3xl font-bold text-primary">
-        Hello from filehub!!
-      </h1>
-    </>
+    <div className="bg-background min-h-screen">
+      <Navbar />
+      <Homepage />
+    </div>
   )
 }
 
