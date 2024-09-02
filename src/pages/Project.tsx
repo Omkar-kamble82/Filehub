@@ -5,7 +5,10 @@ const Project = () => {
 
 
     return (
+        <>
         <div>Project {id}</div>
+        <a href="/projects">Back home</a>
+        </>
     )
 }
 

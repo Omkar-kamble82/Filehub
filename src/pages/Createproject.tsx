@@ -13,6 +13,7 @@ const Createproject = () => {
     <div>
       <h1>Create a new project</h1>
       <button onClick={Logout}>Logout</button>
+      <a href="/project/9283483748749" className="underline">Take me to a project</a>
     </div>
   )
 }
