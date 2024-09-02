@@ -1,6 +1,8 @@
+import { handleAuth } from "../firebase/functions"
+
 const Navbar = () => {
   return (
-    <header className="bg-background fixed w-screen shadow-md">
+    <header className="bg-[white] fixed w-screen shadow-md">
         <div className="mx-auto flex h-20 sm:h-22 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
             <a className="block text-teal-600" href="#">
             <span className="sr-only">Home</span>
@@ -16,12 +18,12 @@ const Navbar = () => {
 
             <div className="flex items-center gap-4">
                 <div className="flex gap-4">
-                <a
+                <button
                     className="block rounded-md  text-[white] bg-primary px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-all hover:duration-700"
-                    href="#"
+                    onClick={handleAuth}
                 >
                     Get Started
-                </a>
+                </button>
                 </div>
 
             </div>

@@ -1,10 +1,13 @@
-const Homepage = () => {
+import { handleAuth } from "../firebase/functions"
+
+const Homebanner = () => {
+
   return (
     <section className="bg-gray-50">
-        <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:flex-col lg:h-screen lg:items-center">
-            <div className="mx-auto max-w-xl text-center sm:mt-[13vh] lg:mt-0 flex flex-col justify-center items-center">
+        <div className="mx-auto max-w-screen-xl px-4 py-32 flex flex-col h-screen items-center">
+            <div className="mx-auto max-w-xl h-screen text-center flex flex-col justify-center items-center">
             <div className="lg:flex-shrink-0">
-                <img className="h-[170px] sm:h-[350px] lg:h-[230px] object-cover" src="/homebanner.png" alt="FileHub logo" />
+                <img className="h-[170px] sm:h-[350px] lg:h-[220px] object-cover" src="/homebanner.png" alt="FileHub logo" />
             </div>
             <h1 className="text-3xl font-extrabold sm:text-3xl">
                 <span className="text-primary">FileHub:</span> Your Ultimate Collaborative File Storage Solution 
@@ -15,12 +18,12 @@ const Homepage = () => {
             </p>
 
             <div className="mt-2 flex flex-wrap justify-center gap-4">
-                <a
+                <button
                 className="block w-full rounded bg-primary px-12 py-3 text-sm font-medium text-[white] shadow hover:opacity-90 transition-all hover:duration-700 focus:outline-none focus:ring active:bg-primary-500 sm:w-auto"
-                href="#"
+                onClick={handleAuth}
                 >
                 Get Started
-                </a>
+                </button>
             </div>
             </div>
         </div>
@@ -28,4 +31,4 @@ const Homepage = () => {
   )
 }
 
-export default Homepage
+export default Homebanner
