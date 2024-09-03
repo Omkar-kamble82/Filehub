@@ -2,7 +2,7 @@ import { Logout } from "../firebase/functions"
 
 const Navbar = () => {
   return (
-    <header className="bg-[white] fixed w-screen shadow-md">
+    <header className="bg-[white] fixed w-screen shadow-md z-[50]">
         <div className="mx-auto flex h-20 sm:h-22 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
             <a className="block text-teal-600" href="/projects">
                 <img src="/logo.png" alt="logo" className="h-10 sm:h-16"/>
