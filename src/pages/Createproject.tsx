@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import { CirclePlus, CircleX } from 'lucide-react';
 import { useState, useEffect } from "react";
 import { createProjectFunction, getUserProjects } from "../firebase/functions";
+import toast from "react-hot-toast";
 // import { doc, getDoc } from "firebase/firestore";
 // import { db } from "../firebase/config";
 // import { getAuth } from "firebase/auth";
@@ -15,11 +16,17 @@ const Createproject = () => {
 
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
-  const [projects, setProjects] = useState<Projecttype[]>([])
+  const [projects, setProjects] = useState<Projecttype[]>([
+    {name:"Chatwave", users: []},
+    {name:"Fashstore", users: []},
+  ])
   const [loading, setLoading] = useState(false)
   
   const handleSubmit = async () => {
     try {
+      if (projects.length === 2) {
+        toast.error("Max limit reached!!")
+      }
       await createProjectFunction(name)
       getProjects()
     } finally {
@@ -48,7 +55,7 @@ const Createproject = () => {
   };
 
   useEffect(() => {
-    getProjects();  // Always fetch projects on component mount
+    // getProjects();  // Always fetch projects on component mount
   }, []);  // Empty dependency array ensures this runs once on mount
   
   
@@ -89,7 +96,15 @@ const Createproject = () => {
       (
         <div className="min-h-screen w-screen">
           <div className="pt-[15vh]">
-            <h1 className="text-4xl text-center font-semibold sm:text-left sm:pl-[20px] mb-[20px] text-primary">Your Projects</h1>
+            <div className="flex w-screen mb-[20px] flex-col gap-2 sm:flex-row sm:justify-between items-center pr-[10px]">
+              <span className="text-center sm:text-left sm:pl-[20px] font-semibold text-primary">
+                <h1 className="text-4xl">Your Projects</h1>
+                <p className="sm:pl-[10px] mt-[5px]">Project limit: 2 / 2</p>
+              </span>
+              <button disabled={projects.length === 2} onClick={() => {setOpen(true)}} className="rounded-md flex gap-1 items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all hover:duration-700 disabled:opacity-50">
+                  <span><CirclePlus /></span>Create New Project
+              </button>
+            </div>
             <div className="gap-4 flex px-[20px] flex-wrap items-center justify-center my-[10px] sm:items-start sm:justify-start">
               {
                 projects.map((project, idx) => (
