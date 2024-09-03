@@ -31,7 +31,7 @@ const Createproject = () => {
     }
   };
 
-  useEffect(() => {
+  useEffect( () => {
     setLoading(true);
     if (localStorage.getItem("projects") !== null) {
       const projects = JSON.parse(localStorage.getItem("projects") as string)
@@ -39,8 +39,13 @@ const Createproject = () => {
       setLoading(false);
       return 
     }
-    getProjects();
-    setLoading(false);
+    const Initailrender = async () => {
+      const projectData = await getProjects();
+      if (!projectData) return
+      setProjects(projectData)
+      setLoading(false);
+    }
+    Initailrender()
   }, []);
   
   return (
@@ -100,7 +105,7 @@ const Createproject = () => {
       ) : (
         <div className="min-h-screen w-screen">
           <div className="pt-[13vh]">
-            <div className="flex w-screen justify-between items-center p-4">
+            <div className="flex w-screen flex-wrap justify-center sm:justify-between items-center p-4">
               <span className="text-center font-semibold sm:text-left text-primary">
                 <h1 className="text-4xl">
                   Your Projects
