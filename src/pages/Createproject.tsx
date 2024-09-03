@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
-import { CirclePlus, CircleX } from 'lucide-react';
+import { CirclePlus, CircleX, Link } from 'lucide-react';
 import { useState, useEffect } from "react";
-import { createProjectFunction, getProjects } from "../firebase/functions";
+import { createProjectFunction, getProjects, joinWithLink } from "../firebase/functions";
 // import { db } from "../firebase/config";
 // import { doc, getDoc } from "firebase/firestore";
 
@@ -15,7 +15,9 @@ export type ProjectType = {
 
 const Createproject = () => {
   const [open, setOpen] = useState(false);
+  const [invite, setInvite] = useState(false);
   const [name, setName] = useState("");
+  const [link, setLink] = useState("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,6 +33,18 @@ const Createproject = () => {
     }
   };
 
+  const handleInvite = async () => {
+    try {
+      await joinWithLink(link);
+      const projectData = await getProjects();
+      if (!projectData) return
+      setProjects(projectData)
+    } finally {
+      setInvite(false);
+      setLink("");
+    }
+  };
+
   useEffect( () => {
     setLoading(true);
     if (localStorage.getItem("projects") !== null) {
@@ -41,15 +55,15 @@ const Createproject = () => {
     }
     const Initailrender = async () => {
       const projectData = await getProjects();
+      setLoading(false);
       if (!projectData) return
       setProjects(projectData)
-      setLoading(false);
     }
     Initailrender()
   }, []);
   
   return (
-    <div className="bg-background max-h-screen">
+    <div className="bg-background min-h-screen max-h-screen">
       {open && (
         <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
           <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
@@ -78,6 +92,34 @@ const Createproject = () => {
           </div>
         </div>
       )}
+      {invite && (
+        <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
+          <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
+            <button className="absolute top-2.5 right-2.5" onClick={() => setInvite(false)}>
+              <CircleX className="text-primary" />
+            </button>
+            <label className="text-xl text-primary text-left font-semibold" htmlFor="name">
+              Paste Invite Link
+            </label>
+            <input
+              onChange={(e) => setLink(e.target.value)}
+              className="border-2 border-primary py-2 px-4 rounded-md outline-none"
+              type="text"
+              id="name"
+              placeholder="http://localhost:5173/project/7837e88398978"
+            />
+            <button
+              type="submit"
+              disabled={link === "" || projects.length === 2}
+              onClick={handleInvite}
+              className="rounded-md mt-4 flex gap-2 items-center justify-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
+            >
+              <Link />
+              Join Project
+            </button>
+          </div>
+        </div>
+      )}
       {loading && (
         <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
           <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col items-center justify-center w-72 sm:w-96 h-64">
@@ -91,14 +133,21 @@ const Createproject = () => {
         <div className="flex flex-col justify-center items-start h-screen w-screen">
           <div className="rounded-xl sm:px-2.5 bg-[white] shadow-lg w-72 sm:w-96 h-64 mx-auto flex text-center flex-col items-center justify-center">
             <h1 className="text-secondary font-semibold sm:text-xl">
-              To start your journey with <span className="text-primary font-extrabold">FileHub</span> create a new project as it seems you don't have one.
+              To start your journey with <span className="text-primary font-extrabold">FileHub</span> create a new project or join with invite link as it seems you don't have one.
             </h1>
             <button
               onClick={() => setOpen(true)}
-              className="rounded-md mt-4 flex gap-1 items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
+              className="rounded-md mt-4 flex gap-1 w-[240px] items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
             >
               <CirclePlus />
               Create New Project
+            </button>
+            <button
+              onClick={() => setInvite(true)}
+              className="rounded-md mt-1 flex gap-1 w-[240px] items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
+            >
+              <Link />
+              Join via invite link
             </button>
           </div>
         </div>
@@ -112,7 +161,7 @@ const Createproject = () => {
                 </h1>
                 <p className="pl-[10px]">Project limit: {projects.length} / 2</p>
               </span>
-              <button
+              <span className="flex gap-2 flex-col items-center sm:flex-row"><button
                 onClick={() => setOpen(true)}
                 className="rounded-md flex gap-1 items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
                 disabled={projects.length === 2}
@@ -120,6 +169,14 @@ const Createproject = () => {
                 <CirclePlus />
                 Create New Project
               </button>
+              <button
+                onClick={() => setInvite(true)}
+                className="rounded-md mt-1 flex gap-1 items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700  disabled:opacity-50"
+                disabled={projects.length === 2}
+              >
+                <Link />
+                Join via invite link
+              </button></span>
             </div>
             
             <div className=" bg-background gap-4 flex px-5 flex-wrap items-center justify-center sm:items-start sm:justify-start">

@@ -45,6 +45,7 @@ const Project = () => {
             >
               Delete project
             </button>
+            <p>invite link: http://localhost:5173/project/{id}</p>
         </div>
     )
 }

@@ -46,7 +46,7 @@ export const createProjectFunction = async (name: string): Promise<void> => {
     }
 
     try {
-        const username = user.displayName as string;
+        const username = user.email as string;
         const docRef = doc(db, "users", username);
         const docSnap = await getDoc(docRef);
         const docId = `${generateId()}${name}`;
@@ -58,32 +58,23 @@ export const createProjectFunction = async (name: string): Promise<void> => {
                 return;
             }
 
-            await setDoc(doc(db, "projects", docId), {
-                id: docId,
-                name,
-                limit: 0.00,
-                creator: username,
-                users: [],
-            });
-
             const updatedProjects = [...userData.projects, { id: docId, Type: "Admin" }];
             await updateDoc(docRef, { projects: updatedProjects });
         } else {
             await setDoc(docRef, {
-                username,
-                email: user.email,
+                username: user.displayName as string,
+                email: username,
                 photoURL: user.photoURL,
                 projects: [{ id: docId, Type: "Admin" }],
             });
-
-            await setDoc(doc(db, "projects", docId), {
-                id: docId,
-                name,
-                limit: 0.00,
-                creator: username,
-                users: [],
-            });
         }
+        await setDoc(doc(db, "projects", docId), {
+          id: docId,
+          name,
+          limit: 0.00,
+          creator: username,
+          users: [{ username: username, Type: "Admin" }],
+      });
 
         toast.success(`${name} project was created!!🎉🎉`);
     } catch (error) {
@@ -98,7 +89,7 @@ export const getUser = async () => {
         const user = auth.currentUser;
         if (!user) return undefined;
 
-        const username = user.displayName as string;
+        const username = user.email as string;
         const docRef = doc(db, "users", username);
         const docSnap = await getDoc(docRef);
         return docSnap;
@@ -114,8 +105,6 @@ export const getProjects = async () => {
     const docSnap = await getUser();
     if (docSnap?.exists()) {
       const projectList = docSnap.data().projects || [];
-      
-      // Fetch all project data concurrently
       const projectData = await Promise.all(
         projectList.map(async (project: { id: string }) => {
           const projectDocRef = doc(db, "projects", project.id);
@@ -123,8 +112,6 @@ export const getProjects = async () => {
           return projectDocSnap.data();
         })
       );
-
-      // Update the state once with all project data
       localStorage.setItem("projects", JSON.stringify(projectData));
       return projectData;
     }
@@ -145,5 +132,62 @@ export const deleteProject = async (id: string) => {
       toast.success("Project deleted successfully!!")
   } catch {
     console.log("Error occurred while deleting project")
+  }
+}
+
+export const joinWithLink = async (link: string) => {
+  const li = link.split("/")
+  const projectId = li[li.length- 1]
+  if (!projectId.trim()) {
+    toast.error("Project name cannot be empty");
+    return;
+  }
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+      toast.error("User not authenticated");
+      return;
+  }
+
+  const docRefProject = doc(db, "projects", projectId);
+  const docSnapProject = await getDoc(docRefProject);
+  if (!docSnapProject.exists()) {
+    toast.error("Invalid Link");
+    return;
+  }
+
+  try{
+    const username = user.email as string;
+    const docRef = doc(db, "users", username);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      if (userData.projects?.length >= 2) {
+          toast.error("Project limit exceeded!!");
+          return;
+      }
+      const updatedProjects = [...userData.projects, { id: projectId, Type: "Member" }];
+      await updateDoc(docRef, { projects: updatedProjects });
+    } else {
+        await setDoc(docRef, {
+            username: user.displayName as string,
+            email: username,
+            photoURL: user.photoURL,
+            projects: [{ id: projectId, Type: "Member" }],
+        });
+
+      }
+      const userarr = docSnapProject.data().users
+      userarr.push({username: username, Type: "Member"})
+
+      await updateDoc(docRefProject, {
+          users: userarr
+      });
+    
+      toast.success("Project joined successfully")
+  } catch {
+    toast.error("Error occurred while joining a project!!")
   }
 }
