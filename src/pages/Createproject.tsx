@@ -49,7 +49,7 @@ const Createproject = () => {
   }, []);
   
   return (
-    <div className="bg-background">
+    <div className="bg-background max-h-screen">
       {open && (
         <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
           <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
@@ -103,8 +103,8 @@ const Createproject = () => {
           </div>
         </div>
       ) : (
-        <div className="min-h-screen w-screen">
-          <div className="pt-[13vh]">
+        <div className="bg-background w-screen">
+          <div className="pt-[12vh] pb-[4vh] sm:pt-[13vh]">
             <div className="flex w-screen flex-wrap justify-center sm:justify-between items-center p-4">
               <span className="text-center font-semibold sm:text-left text-primary">
                 <h1 className="text-4xl">
@@ -122,12 +122,12 @@ const Createproject = () => {
               </button>
             </div>
             
-            <div className="gap-4 flex px-5 flex-wrap items-center justify-center sm:items-start sm:justify-start">
+            <div className=" bg-background gap-4 flex px-5 flex-wrap items-center justify-center sm:items-start sm:justify-start">
               {projects.map((project, idx) => (
                 <a key={project.id} href={`/project/${project.id}`}>
                   <div className="rounded-xl cursor-pointer bg-[white] shadow-lg w-70 pb-2.5">
                     <div className="relative h-36 rounded-xl">
-                      <img className="h-36 w-full rounded-t-xl" src={`/${idx}.jpg`} alt="project-banner" />
+                      <img className="h-36 w-full rounded-t-xl object-cover" src={`/${idx}.jpg`} alt="project-banner" />
                       <div className="absolute bg-primary/70 inset-0 rounded-t-xl" />
                     </div>
                     <div className="p-2">
@@ -138,7 +138,7 @@ const Createproject = () => {
                         <span className="font-bold text-primary">Created By:</span> Omkar Kamble
                       </p>
                       <p className="text-xs">
-                        <span className="font-bold text-primary">Collaborators:</span> Omkar Kamble, Nitish Rajput
+                        <span className="font-bold text-primary">Collaborators:</span> Omkar Kamble, Nitish Rajput, Omkar Kamble, Nitish Rajput
                       </p>
                       <h2 className="my-2.5">
                         <span className="text-xl font-extrabold text-primary">4.45MB</span> / 100MB (20% used)
