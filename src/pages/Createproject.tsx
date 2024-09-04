@@ -1,9 +1,10 @@
 import Navbar from "../components/Navbar";
-import { CirclePlus, CircleX, Link } from 'lucide-react';
+import { CirclePlus, Link } from 'lucide-react';
 import { useState, useEffect } from "react";
-import { createProjectFunction, getProjects, joinWithLink } from "../firebase/functions";
-// import { db } from "../firebase/config";
-// import { doc, getDoc } from "firebase/firestore";
+import { getProjects } from "../firebase/functions";
+import Loading from "../components/Loading";
+import Invite from "../components/Invite";
+import Createnewproject from "../components/Createnewproject";
 
 export type ProjectType = {
   id: string,
@@ -16,34 +17,8 @@ export type ProjectType = {
 const Createproject = () => {
   const [open, setOpen] = useState(false);
   const [invite, setInvite] = useState(false);
-  const [name, setName] = useState("");
-  const [link, setLink] = useState("");
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async () => {
-    try {
-      await createProjectFunction(name);
-      const projectData = await getProjects();
-      if (!projectData) return
-      setProjects(projectData)
-    } finally {
-      setName("");
-      setOpen(false);
-    }
-  };
-
-  const handleInvite = async () => {
-    try {
-      await joinWithLink(link);
-      const projectData = await getProjects();
-      if (!projectData) return
-      setProjects(projectData)
-    } finally {
-      setInvite(false);
-      setLink("");
-    }
-  };
 
   useEffect( () => {
     setLoading(true);
@@ -64,70 +39,9 @@ const Createproject = () => {
   
   return (
     <div className="bg-background min-h-screen max-h-screen">
-      {open && (
-        <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
-          <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
-            <button className="absolute top-2.5 right-2.5" onClick={() => setOpen(false)}>
-              <CircleX className="text-primary" />
-            </button>
-            <label className="text-xl text-primary text-left font-semibold" htmlFor="name">
-              Project Name
-            </label>
-            <input
-              onChange={(e) => setName(e.target.value)}
-              className="border-2 border-primary py-2 px-4 rounded-md outline-none"
-              type="text"
-              id="name"
-              placeholder="Enter project name..."
-            />
-            <button
-              type="submit"
-              disabled={name === "" || projects.length === 2}
-              onClick={handleSubmit}
-              className="rounded-md mt-4 flex gap-2 items-center justify-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
-            >
-              <CirclePlus />
-              Create New Project
-            </button>
-          </div>
-        </div>
-      )}
-      {invite && (
-        <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
-          <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
-            <button className="absolute top-2.5 right-2.5" onClick={() => setInvite(false)}>
-              <CircleX className="text-primary" />
-            </button>
-            <label className="text-xl text-primary text-left font-semibold" htmlFor="name">
-              Paste Invite Link
-            </label>
-            <input
-              onChange={(e) => setLink(e.target.value)}
-              className="border-2 border-primary py-2 px-4 rounded-md outline-none"
-              type="text"
-              id="name"
-              placeholder="http://localhost:5173/project/7837e88398978"
-            />
-            <button
-              type="submit"
-              disabled={link === "" || projects.length === 2}
-              onClick={handleInvite}
-              className="rounded-md mt-4 flex gap-2 items-center justify-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
-            >
-              <Link />
-              Join Project
-            </button>
-          </div>
-        </div>
-      )}
-      {loading && (
-        <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
-          <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col items-center justify-center w-72 sm:w-96 h-64">
-            <img className="h-36 w-36" src="/loading.gif" alt="Loading..." />
-            <p className="text-2xl text-primary font-bold">Loading User Info</p>
-          </div>
-        </div>
-      )}
+      {open && ( <Createnewproject setOpen={setOpen} setProjects={setProjects} projects={projects} /> )}
+      {invite && (<Invite setProjects={setProjects} projects={projects} setInvite={setInvite}/> )}
+      {loading && <Loading Message="Loading User Info"/> }
       <Navbar />
       {projects.length === 0 ? (
         <div className="flex flex-col justify-center items-start h-screen w-screen">
@@ -181,8 +95,8 @@ const Createproject = () => {
             
             <div className=" bg-background gap-4 flex px-5 flex-wrap items-center justify-center sm:items-start sm:justify-start">
               {projects.map((project, idx) => (
-                <a key={project.id} href={`/project/${project.id}`}>
-                  <div className="rounded-xl cursor-pointer bg-[white] shadow-lg w-70 pb-2.5">
+                <a key={idx} href={`/project/${project.id}`}>
+                  <div className="rounded-xl w-[320px] cursor-pointer bg-[white] shadow-lg w-70 pb-2.5">
                     <div className="relative h-36 rounded-xl">
                       <img className="h-36 w-full rounded-t-xl object-cover" src={`/${idx}.jpg`} alt="project-banner" />
                       <div className="absolute bg-primary/70 inset-0 rounded-t-xl" />
@@ -192,15 +106,15 @@ const Createproject = () => {
                         {project.name}
                       </h1>
                       <p>
-                        <span className="font-bold text-primary">Created By:</span> Omkar Kamble
+                        <span className="font-bold text-primary">Created By:</span> {project.creator}
                       </p>
-                      <p className="text-xs">
-                        <span className="font-bold text-primary">Collaborators:</span> Omkar Kamble, Nitish Rajput, Omkar Kamble, Nitish Rajput
+                      <p className="">
+                        <span className="font-bold text-primary">Collaborators:</span> {project.users.length}
                       </p>
                       <h2 className="my-2.5">
-                        <span className="text-xl font-extrabold text-primary">4.45MB</span> / 100MB (20% used)
+                        <span className="text-xl font-extrabold text-primary">{project.limit.toFixed(2)}</span>/100MB ({(Number(project.limit.toFixed(2)) / 100) * 100}% used)
                       </h2>
-                      <span className="p-2 bg-background rounded-xl font-semibold text-primary">Shared</span>
+                      <span className="p-2 bg-background rounded-xl font-semibold text-primary">{project.users.length > 1 ? "Shared" : "Personal"}</span>
                     </div>
                   </div>
                 </a>

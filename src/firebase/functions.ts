@@ -8,6 +8,11 @@ type userProject = {
   Type: string;
 }
 
+type user = {
+  username: string,
+  Type: string;
+}
+
 export const Login = () => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider);
@@ -72,7 +77,7 @@ export const createProjectFunction = async (name: string): Promise<void> => {
           id: docId,
           name,
           limit: 0.00,
-          creator: username,
+          creator: user.displayName as string,
           users: [{ username: username, Type: "Admin" }],
       });
 
@@ -123,12 +128,21 @@ export const getProjects = async () => {
 export const deleteProject = async (id: string) => {
   try {
       const docRef = doc(db, "projects", id);
-      await deleteDoc(docRef);
-      const docSnap = await getUser()
-      if (docSnap?.exists()) {
-        const updatedProjects = docSnap?.data().projects.filter((project: userProject) => project.id!== id)
-        await updateDoc(doc(db, "users", docSnap?.data().username), { projects: updatedProjects })
+      const docSnap = await getDoc(docRef);
+      if(!docSnap.exists()) {
+        toast.error("Project does not exist!!")
+        return 
       }
+      const users = docSnap.data().users as user[]
+      users.forEach(async (user) => {
+        const docRef = doc(db, "users", user.username);
+        const docSnap = await getDoc(docRef);
+        if (docSnap?.exists()) {
+          const updatedProjects = docSnap?.data().projects.filter((project: userProject) => project.id!== id)
+          await updateDoc(docRef, { projects: updatedProjects })
+        }
+      })
+      await deleteDoc(docRef);
       toast.success("Project deleted successfully!!")
   } catch {
     console.log("Error occurred while deleting project")

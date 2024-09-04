@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { deleteProject, getProjects } from "../firebase/functions";
 import Not_found from "./Not_found";
 import { useState } from "react";
+import Loading from "../components/Loading";
 
 const Project = () => {
     const { id } = useParams();
@@ -30,14 +31,7 @@ const Project = () => {
     return (
         <div>
             <Navbar />
-            {loading && (
-                <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
-                <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col items-center justify-center w-72 sm:w-96 h-64">
-                    <img className="h-36 w-36" src="/loading.gif" alt="Loading..." />
-                    <p className="text-2xl text-primary font-bold">Deleting project</p>
-                </div>
-                </div>
-            )}
+            { loading && (<Loading Message="Deleting project"/>) }
             <div className="pt-[16vh]">Project {id}</div>
             <button
               onClick={handleDelete}
