@@ -27,7 +27,7 @@ const Createnewproject = (props: Props) => {
   return (
     <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
           <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center px-5 w-72 sm:w-96 h-64">
-            <button className="absolute top-2.5 right-2.5" onClick={() => props.setOpen(false)}>
+            <button className="absolute top-2.5 right-2.5" onClick={() => {props.setOpen(false); setName("")}}>
               <CircleX className="text-primary" />
             </button>
             <label className="text-xl text-primary text-left font-semibold" htmlFor="name">

@@ -11,7 +11,10 @@ export type ProjectType = {
   name: string,
   limit: number,
   creator: string,
-  users: [],
+  users: [{
+    username: string,
+    Type: string,
+  }],
 }
 
 const Createproject = () => {
