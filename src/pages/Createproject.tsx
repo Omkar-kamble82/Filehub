@@ -25,6 +25,7 @@ const Createproject = () => {
     if (localStorage.getItem("projects") !== null) {
       const projects = JSON.parse(localStorage.getItem("projects") as string)
       setProjects(projects);
+      console.log("fetch", projects)
       setLoading(false);
       return 
     }
@@ -58,7 +59,7 @@ const Createproject = () => {
             </button>
             <button
               onClick={() => setInvite(true)}
-              className="rounded-md mt-1 flex gap-1 w-[240px] items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
+              className="rounded-md mt-1 flex gap-1 w-[240px] items-center text-[white] bg-[#1d9549] px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
             >
               <Link />
               Join via invite link
@@ -85,7 +86,7 @@ const Createproject = () => {
               </button>
               <button
                 onClick={() => setInvite(true)}
-                className="rounded-md mt-1 flex gap-1 items-center text-[white] bg-primary px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700  disabled:opacity-50"
+                className="rounded-md mt-1 flex gap-1 items-center text-[white] bg-[#1d9549] px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700  disabled:opacity-50"
                 disabled={projects.length === 2}
               >
                 <Link />

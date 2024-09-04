@@ -1,45 +1,80 @@
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { deleteProject, getProjects } from "../firebase/functions";
+import { getProject } from "../firebase/functions";
 import Not_found from "./Not_found";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
+import toast from "react-hot-toast";
+import { ProjectType } from "./Createproject";
+import { Trash, Link } from "lucide-react";
+import DeleteModel from "../components/DeleteModel";
 
 const Project = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading,setLoading] = useState(false);
+    const [deleteloading,setDeleteLoading] = useState(false);
+    const [project, setProject] = useState<ProjectType | null>(null);
+    const [deletemodel, setDeletemodel] = useState(false)
     
+    useEffect(() => {
+        setProject(null)
+        setLoading(true)
+        const pro = JSON.parse(localStorage.getItem("project") as string) 
+        if(pro !== "" && localStorage.getItem("project") && id === pro.id) {
+            setProject(pro)
+            console.log("Exist")
+            setLoading(false)
+            return
+        }
+        get()
+    }, [])
+
     if (!id) {
         return <Not_found/>;
     }
 
-    const handleDelete = async () => {
-        setLoading(true);
-        try {
-            await deleteProject(id);
-            await getProjects()
+    const get = async() => {
+        setLoading(true)
+        const projectfected = await getProject(id)
+        if (projectfected === undefined){
+            toast.error("Project not found")
             navigate("/projects")
-            setLoading(false);
-        } catch {
-            console.log("Error occurred while deleting project")
-        } finally {
-            setLoading(false);
+            return
         }
+        console.log("Fetched")
+        if(typeof localStorage.getItem("project") === "string"){
+            setProject(JSON.parse(localStorage.getItem("project") as string))
+        }
+        setLoading(false)
     }
 
     return (
         <div>
             <Navbar />
-            { loading && (<Loading Message="Deleting project"/>) }
-            <div className="pt-[16vh]">Project {id}</div>
-            <button
-              onClick={handleDelete}
-              className="rounded-md mt-4 flex gap-1 items-center text-[white] bg-[#ff4c28] px-6 py-2.5 text-lg font-semibold hover:opacity-90 transition-all duration-700"
-            >
-              Delete project
-            </button>
-            <p>invite link: http://localhost:5173/project/{id}</p>
+            { deleteloading && (<Loading Message="Deleting project"/>) }
+            { loading && (<Loading Message="Loading Project Info"/>) }
+            { project && deletemodel && ( <DeleteModel setDeleteLoading={setDeleteLoading} id={id} setDeletemodel={setDeletemodel} project={project}/> )}
+            {project ? (
+                <div className="pt-[16vh]">
+                    <span className="flex justify-between w-screen items-center px-[10px] sm:pr-[25px]">
+                        <h1 className="text-primary text-5xl font-bold">{project.name}</h1>
+                        <div className="flex item-center gap-2">
+                            <button onClick={() => setDeletemodel(true)} className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#ff4d00fe] text-[#ff4d00fe] flex justify-center items-center">
+                                <Trash />
+                            </button>
+                            <button className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#1d9549] text-[#1d9549] flex justify-center items-center">
+                                <Link />
+                            </button>
+                        </div>
+                    </span>
+                    <p>invite link: https://file-hub-rho.vercel.app/{id}</p>
+                </div>
+            ) : 
+            <div className="pt-[16vh] flex justify-center items-center">
+                <p className="text-primary text-5xl font-bold">Loading......</p>
+            </div>
+            }
         </div>
     )
 }

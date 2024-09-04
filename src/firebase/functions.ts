@@ -114,10 +114,13 @@ export const getProjects = async () => {
         projectList.map(async (project: { id: string }) => {
           const projectDocRef = doc(db, "projects", project.id);
           const projectDocSnap = await getDoc(projectDocRef);
-          return projectDocSnap.data();
+          const data = projectDocSnap.data();
+          return data ? { id: project.id, ...data } : null;
         })
       );
-      localStorage.setItem("projects", JSON.stringify(projectData));
+      
+      const filteredProjectData = projectData.filter((data) => data !== null);
+      localStorage.setItem("projects", JSON.stringify(filteredProjectData));
       return projectData;
     }
   } catch (error) {
@@ -200,8 +203,20 @@ export const joinWithLink = async (link: string) => {
           users: userarr
       });
     
-      toast.success("Project joined successfully")
+      toast.success("Project joined successfully🎉🎉")
   } catch {
     toast.error("Error occurred while joining a project!!")
   }
+}
+
+export const getProject = async (id: string) => {
+  const docRef = doc(db, "projects", id);
+  const docSnap = await getDoc(docRef);
+  if(!docSnap.exists()) {
+      toast.error("Project does not exist!!")
+      return undefined
+  }
+  const project = docSnap.data()
+  localStorage.setItem("project", JSON.stringify(project))
+  return project;
 }
