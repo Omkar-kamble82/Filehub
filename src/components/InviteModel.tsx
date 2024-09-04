@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 
 type Props = {
     setInvitemodel: React.Dispatch<React.SetStateAction<boolean>>;
+    id: string
 }
 
 const InviteModel = (props: Props) => {
@@ -32,7 +33,7 @@ const InviteModel = (props: Props) => {
             <div>
                 <h1 className="text-2xl text-center font-bold text-primary">Invite Link</h1>
                 <span className="min-w-[300px] h-[35px] flex items-center justify-center border-[2px] px-[1px] rounded-md border-primary">
-                    <p id="inviteLinkText" className="truncate max-w-[270px]">https://file-hub-rho.vercel.app/invite/RaHQxd31Chatwave</p>
+                    <p id="inviteLinkText" className="truncate max-w-[270px]">https://file-hub-rho.vercel.app/invite/{props.id}</p>
                     <span onClick={copyToClipboard} className=""><Copy size={20}/></span>
                 </span>
             </div>

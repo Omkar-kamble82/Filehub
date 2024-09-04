@@ -11,13 +11,20 @@ import DeleteModel from "../components/DeleteModel";
 import InviteModel from "../components/InviteModel";
 import Contributors from "../components/Contributors";
 import Files from "../components/Files";
+import Guidelines from "../components/Guidelines";
+
+export type projectwithrole = ProjectType & {
+    Role: string
+    username: string
+    email: string
+}
 
 const Project = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading,setLoading] = useState(false);
     const [deleteloading,setDeleteLoading] = useState(false);
-    const [project, setProject] = useState<ProjectType | null>(null);
+    const [project, setProject] = useState<projectwithrole | null>(null);
     const [deletemodel, setDeletemodel] = useState(false)
     const [inviteModel, setInvitemodel] = useState(false)
     const [page,setPage] = useState("files")
@@ -57,15 +64,15 @@ const Project = () => {
             { deleteloading && (<Loading Message="Deleting project"/>) }
             { loading && (<Loading Message="Loading Project Info"/>) }
             { project && deletemodel && ( <DeleteModel setDeleteLoading={setDeleteLoading} id={id} setDeletemodel={setDeletemodel} project={project}/> )}
-            {inviteModel && ( <InviteModel setInvitemodel={setInvitemodel}/>)}
-            {project ? (
+            { inviteModel && ( <InviteModel setInvitemodel={setInvitemodel} id={id}/>)}
+            { project ? (
                 <div className="pt-[16vh] w-[96vw] mx-auto">
                     <span className="flex justify-between items-center">
                         <h1 className="text-primary text-5xl font-bold">{project.name}</h1>
                         <div className="flex item-center gap-2">
-                            <button onClick={() => setDeletemodel(true)} className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#ff4d00fe] text-[#ff4d00fe] flex justify-center items-center">
+                            {project.Role === "Admin" && (<button onClick={() => setDeletemodel(true)} className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#ff4d00fe] text-[#ff4d00fe] flex justify-center items-center">
                                 <Trash />
-                            </button>
+                            </button>)}
                             <button onClick={() => setInvitemodel(true)} className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#1d9549] text-[#1d9549] flex justify-center items-center">
                                 <Link />
                             </button>
@@ -77,27 +84,8 @@ const Project = () => {
                         <p onClick={() => setPage("rules")} className={`cursor-pointer ${page === "rules" ? `font-bold text-primary underline` : ``}`}>Guidelines</p>
                     </div>
                     { page === "files" && (<Files />)}
-                    { page === "contributors" && (<Contributors project={project}/>)}
-                    { page === "rules" && (
-                        <div className="h-[68vh] overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
-                            <p className="text-3xl text-primary text-center font-bold mt-[20px]">Guidelines</p>
-                            <div className="mt-[20px]">
-                                <p className="text-xl"><span className="font-bold text-primary text-2xl">1.  </span> There are three roles for collaborators: <span className="font-bold text-primary text-2xl">Admin</span>, <span className="font-bold text-primary text-2xl">Moderator</span>, and <span className="font-bold text-primary text-2xl">Member</span>.</p>
-                                <p className="text-xl mt-[8px]"><span className="font-bold text-primary text-2xl">2.   Admin:</span> The Admin is the project creator and has the highest level of control. Admins can:</p>
-                                <div className="text-xl ml-[20px]">
-                                    <p><span className="font-bold text-primary text-2xl">2.a:</span> Delete the project.</p>
-                                    <p><span className="font-bold text-primary text-2xl">2.b:</span> Promote or demote Moderators and Members.</p>
-                                    <p><span className="font-bold text-primary text-2xl">2.c:</span> Upload, delete, and download any documents.</p>
-                                </div>
-                                <p className="text-xl mt-[8px]"><span className="font-bold text-primary text-2xl">3.   Moderator:</span> Moderators have significant control but cannot delete the project. Moderators can:</p>
-                                <div className="text-xl ml-[20px]">
-                                    <p><span className="font-bold text-primary text-2xl">3.a:</span> Promote or demote Moderators and Members.</p>
-                                    <p><span className="font-bold text-primary text-2xl">3.b:</span> Upload, delete, and download any documents.</p>
-                                </div>
-                                <p className="text-xl mt-[8px]"><span className="font-bold text-primary text-2xl">4.   Member:</span> Members have limited access and can only download documents.</p>
-                            </div>
-                        </div>
-                    )}
+                    { page === "contributors" && (<Contributors project={project} setPage={setPage}/>)}
+                    { page === "rules" && (<Guidelines />)}
                 </div>
             ) : 
             <div className="pt-[16vh] flex justify-center items-center">

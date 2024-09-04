@@ -12,6 +12,7 @@ export type ProjectType = {
   limit: number,
   creator: string,
   users: [{
+    email: string,
     username: string,
     Type: string,
   }],

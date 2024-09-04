@@ -10,6 +10,7 @@ type userProject = {
 
 type user = {
   username: string,
+  email: string
   Type: string;
 }
 
@@ -21,6 +22,7 @@ export const Login = () => {
 export const Logout = () => {
     const auth = getAuth();
     localStorage.removeItem("projects")
+    localStorage.removeItem("project")
     signOut(auth).catch((error) => {
         console.error("Error signing out:", error);
         toast.error("Failed to log out");
@@ -78,7 +80,8 @@ export const createProjectFunction = async (name: string): Promise<void> => {
           name,
           limit: 0.00,
           creator: user.displayName as string,
-          users: [{ username: username, Type: "Admin" }],
+          creatorEmail: user.email as string,
+          users: [{ username: user.displayName, email: username, Type: "Admin" }],
       });
 
         toast.success(`${name} project was created!!🎉🎉`);
@@ -201,7 +204,7 @@ export const joinWithLink = async (link: string) => {
 
       }
       const userarr = docSnapProject.data().users
-      userarr.push({username: username, Type: "Member"})
+      userarr.push({username: user.displayName, email: username, Type: "Member"})
 
       await updateDoc(docRefProject, {
           users: userarr
@@ -216,11 +219,113 @@ export const joinWithLink = async (link: string) => {
 export const getProject = async (id: string) => {
   const docRef = doc(db, "projects", id);
   const docSnap = await getDoc(docRef);
+  const auth = getAuth();
+  const user = auth.currentUser;
   if(!docSnap.exists()) {
       toast.error("Project does not exist!!")
       return undefined
   }
-  const project = docSnap.data()
+  let project = docSnap.data()
+  let role: string = ""
+  const users: user[] = project.users
+  users.forEach((userInfo) => {
+    if(user?.displayName === userInfo.username && user?.email === userInfo.email){
+      role = userInfo.Type
+    }
+  })
+  project = {...project, Role: role, username: user?.displayName, email: user?.email}
   localStorage.setItem("project", JSON.stringify(project))
   return project;
+}
+
+export const promote = async(memberemail: string, projectId: string) => {
+  try{
+    const docRef = doc(db, "users", memberemail);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const project: userProject[] = docSnap.data().projects
+      project.forEach((pro) => {
+        if(pro.id === projectId){
+          pro.Type = "Moderator";
+        }
+      })
+      await updateDoc(docRef, { projects: project });
+      const docRefproject = doc(db, "projects", projectId);
+      const docSnapproject = await getDoc(docRefproject);
+      if(docSnapproject.exists()){
+        const usersarr: user[] = docSnapproject.data().users
+        usersarr.forEach((userInfo) => {
+          if(userInfo.email === memberemail){
+            userInfo.Type = "Moderator";
+          }
+        })
+        await updateDoc(docRefproject, {
+            users: usersarr
+        });
+      }
+    }
+    toast.success("User promoted successfully!!")
+    await getProject(projectId)
+  } catch {
+    toast.error("Something went wrong!!")
+  }
+}
+
+export const demote = async(memberemail: string, projectId: string) => {
+  try{
+    const docRef = doc(db, "users", memberemail);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const project: userProject[] = docSnap.data().projects
+      project.forEach((pro) => {
+        if(pro.id === projectId){
+          pro.Type = "Member";
+        }
+      })
+      await updateDoc(docRef, { projects: project });
+      const docRefproject = doc(db, "projects", projectId);
+      const docSnapproject = await getDoc(docRefproject);
+      if(docSnapproject.exists()){
+        const usersarr: user[] = docSnapproject.data().users
+        usersarr.forEach((userInfo) => {
+          if(userInfo.email === memberemail){
+            userInfo.Type = "Member";
+          }
+        })
+        await updateDoc(docRefproject, {
+            users: usersarr
+        });
+      }
+    }
+    toast.success("User demoted successfully!!")
+    await getProject(projectId)
+  } catch {
+    toast.error("Something went wrong!!")
+  }
+}
+
+export const deleteuser = async(memberemail: string, projectId: string) => {
+  console.log(memberemail, projectId)
+  try{
+    const docRef = doc(db, "users", memberemail);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const project: userProject[] = docSnap.data().projects
+      const filteredproject = project.filter((pro) => pro.id !== projectId)
+      await updateDoc(docRef, { projects: filteredproject });
+      const docRefproject = doc(db, "projects", projectId);
+      const docSnapproject = await getDoc(docRefproject);
+      if(docSnapproject.exists()){
+        const usersarr: user[] = docSnapproject.data().users
+        const filtereduser = usersarr.filter((user) => user.email !== memberemail)
+        await updateDoc(docRefproject, {
+            users: filtereduser
+        });
+      }
+    }
+    toast.success("User deleted successfully!!")
+    await getProject(projectId)
+  } catch {
+    toast.error("Something went wrong!!")
+  }
 }
