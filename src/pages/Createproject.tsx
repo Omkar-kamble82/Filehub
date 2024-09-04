@@ -25,7 +25,6 @@ const Createproject = () => {
     if (localStorage.getItem("projects") !== null) {
       const projects = JSON.parse(localStorage.getItem("projects") as string)
       setProjects(projects);
-      console.log("fetch", projects)
       setLoading(false);
       return 
     }

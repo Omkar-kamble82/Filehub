@@ -155,6 +155,10 @@ export const deleteProject = async (id: string) => {
 export const joinWithLink = async (link: string) => {
   const li = link.split("/")
   const projectId = li[li.length- 1]
+  if (li[2] !== "file-hub-rho.vercel.app"){
+    toast.error("Invalid link!!");
+    return 
+  }
   if (!projectId.trim()) {
     toast.error("Project name cannot be empty");
     return;
