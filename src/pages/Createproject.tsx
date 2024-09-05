@@ -21,6 +21,7 @@ export type ProjectType = {
     id:string,
     link:string,
     type:string,
+    size: number
   }]
 }
 

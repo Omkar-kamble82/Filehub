@@ -2,7 +2,7 @@ import { Shield, ShieldPlus, ShieldX } from "lucide-react"
 
 const Guidelines = () => {
   return (
-    <div className="h-[68vh] overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
+    <div className="h-[63vh] sm:h-[65vh] overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
         <p className="text-3xl text-primary text-center font-bold mt-[20px]">Guidelines</p>
         <div className="mt-[20px]">
             <div className="text-xl"><span className="font-bold text-primary text-2xl">1.  </span> There are three roles for collaborators: 

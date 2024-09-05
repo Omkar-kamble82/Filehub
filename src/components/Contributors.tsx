@@ -11,26 +11,13 @@ type Props = {
 }
 
 const Contibutors = (props: Props) => {
-    // const navigate = useNavigate();
+    
     const [model, setModel] = useState(false)
     const [action, setAction] = useState<"Promote" | "Demote" | "Delete" | "">("")
     const [email, setEmail] = useState("")
-
-    // const promoteUser = async(email:string) => {
-    //     await promote(email, props.project.id); 
-    //     navigate(0)
-    // }
-    // const demoteUser = async(email:string) => {
-    //     await demote(email, props.project.id)
-    //     navigate(0)
-    // }
-    // const deleteUserfunction = async(email:string) => {
-    //     await deleteuser(email, props.project.id)
-    //     navigate(0)
-    // }
     
   return (
-    <div className="h-[68vh] bg-[white] rounded-xl mt-[8px] p-2">
+    <div className="h-[63vh] sm:h-[65vh] bg-[white] rounded-xl mt-[8px] p-2">
         {model && <RolechangeModel setRolechangemodel={setModel} action={action} email={email} projectId={props.project.id}/>}
         
         <p className="text-3xl text-primary text-center font-bold mt-[20px]">Contributors</p>

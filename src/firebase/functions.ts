@@ -2,6 +2,7 @@ import { GoogleAuthProvider, signInWithPopup, signOut, getAuth } from "firebase/
 import { auth, db } from "./config";
 import toast from "react-hot-toast";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 
 type userProject = {
   id: string;
@@ -12,6 +13,14 @@ type user = {
   username: string,
   email: string
   Type: string;
+}
+
+type file = {
+  dateadded:string,
+  id:string,
+  link:string,
+  type:string,
+  size: number
 }
 
 export const Login = () => {
@@ -331,17 +340,16 @@ export const deleteuser = async(memberemail: string, projectId: string) => {
   }
 }
 
-export const addImage = async(projectId:string, url:string, FT:string, name:string, limit: number) => {
+export const addImage = async(projectId:string, url:string, FT:string, name:string, limit: number, size: number) => {
   try{
     const date = new Date();
     const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-    const projectobject = {id: name, type: FT, dateadded: formattedDate, link: url}
+    const projectobject = {id: name, type: FT, dateadded: formattedDate, link: url, size}
     const docRef = doc(db, "projects", projectId);
     const docSnap = await getDoc(docRef);
      if(docSnap.exists()){
         const updatedprojects = docSnap.data().files
         updatedprojects.push(projectobject)
-        console.log(projectobject)
         await updateDoc(docRef, { 
           files: updatedprojects,
           limit: limit 
@@ -369,3 +377,30 @@ export const copyToClipboard = (id: string) => {
       console.error('Element not found');
     }
 };
+
+export const deleteFile = async(fileId: string, projectId: string) => {
+  try{
+    const docRef = doc(db, "projects", projectId);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()){
+      const updatedfiles: file[] = docSnap.data().files
+      let filteredfiles = updatedfiles.filter((file) => file.id === fileId)
+      const limit = docSnap.data().limit - filteredfiles[0].size
+      filteredfiles = updatedfiles.filter((file) => file.id !== fileId)
+      console.log(limit, filteredfiles)
+      await updateDoc(docRef, { 
+        files: filteredfiles, 
+        limit: limit
+      });
+      const storage = getStorage();
+      const desertRef = ref(storage, `Filehub/${fileId}`);
+      deleteObject(desertRef).then(() => {
+      }).catch(() => {
+      });
+    }
+    toast.success("File deleted successfully")
+    await getProject(projectId)
+  } catch {
+    toast.error("Something went wrong!!")
+  }
+}

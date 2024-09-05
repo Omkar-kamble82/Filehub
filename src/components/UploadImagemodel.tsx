@@ -23,13 +23,14 @@ const UploadImagemodel = (props: Props) => {
         if(!fileupload) return 
         const Uploadedfile = fileupload[0];
         if (Uploadedfile === null) return;
-        if (Uploadedfile && Uploadedfile.size > 3000000) {
-            toast.error("File size exceeds: (Max size: 3MB)")
+        if (Uploadedfile && Uploadedfile.size > 10000000) {
+            toast.error("File size exceeds: (Max size: 10MB)")
             props.setLoading(false)
             props.setModel(true)
             return
         }
-        const limit = (Number(((Uploadedfile.size/1024)/1024).toFixed(4)) + props.project.limit)
+        const size = Number(((Uploadedfile.size/1024)/1024).toFixed(4))
+        const limit = (size + props.project.limit)
         if (Uploadedfile && limit > 50) {
             toast.error("Peoject size exceeds: (Max size: 50MB)")
             props.setLoading(false)
@@ -39,14 +40,14 @@ const UploadImagemodel = (props: Props) => {
         const imageRef = ref(storage, `Filehub/${Uploadedfile.name}`);
         await uploadBytes(imageRef, Uploadedfile).then((snapshot) => {
             getDownloadURL(snapshot.ref).then(async(url) => {
-                ImageUpload(url, Uploadedfile.type.split("/")[0], Uploadedfile.name, limit)
+                ImageUpload(url, Uploadedfile.type.split("/")[0], Uploadedfile.name, limit, size)
             })
         })
     }
 
-    const ImageUpload = async (url:string, FT: string, name: string, limit: number) => {
+    const ImageUpload = async (url:string, FT: string, name: string, limit: number, size: number) => {
         try{
-            await addImage(props.project.id, url, FT, name, limit)
+            await addImage(props.project.id, url, FT, name, limit, size)
             setFileupload(null)
             navigate(0)
             props.setLoading(false)
@@ -67,7 +68,7 @@ const UploadImagemodel = (props: Props) => {
                 <div className="absolute z-[18] font-bold text-2xl text-[#1d9549] flex justify-center items-center flex-col">
                     <Upload size={40}/>
                     <h1>Upload File</h1>
-                    <span className="text-sm font-normal">(Max size: 3MB)</span>
+                    <span className="text-sm font-normal">(Max size: 10MB)</span>
                 </div>
                 
             </div>)}
