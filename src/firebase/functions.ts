@@ -394,7 +394,6 @@ export const deleteFile = async(fileId: string, projectId: string) => {
       let filteredfiles = updatedfiles.filter((file) => file.id === fileId)
       const limit = docSnap.data().limit - filteredfiles[0].size
       filteredfiles = updatedfiles.filter((file) => file.id !== fileId)
-      console.log(limit, filteredfiles)
       await updateDoc(docRef, { 
         files: filteredfiles, 
         limit: limit

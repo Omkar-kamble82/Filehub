@@ -3,8 +3,8 @@ import { projectwithrole } from "../pages/Project";
 import { useState } from "react";
 import Loading from "./Loading";
 import UploadImagemodel from "./UploadImagemodel";
-import { copyToClipboard, deleteFile } from "../firebase/functions";
-import { useNavigate } from "react-router-dom";
+import { copyToClipboard } from "../firebase/functions";
+import DeleteFile from "./DeleteFile";
 
 type Props = {
     project: projectwithrole
@@ -13,28 +13,17 @@ type Props = {
 const Files = (props: Props) => {
 
     const [model, setModel] = useState(false)
+    const [filename, setFilename] = useState("")
+    const [modeldelete, setDeleteModel] = useState(false)
     const [loading, setLoading] = useState(false)
     const [deleteloading, setDeleteLoading] = useState(false)
-    const navigate = useNavigate()
-
-    const deletefilefunction = async(fileId: string) => {
-        setDeleteLoading(true)
-        try{
-             await deleteFile(fileId, props.project.id)
-             navigate(0)
-             setDeleteLoading(false)
-        } catch {
-            console.log("Something went wrong")
-        } finally {
-            setDeleteLoading(false)
-        }
-    }
 
   return (
     <div className="h-[63vh] sm:h-[65vh] shadow-xl overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
         { loading && (<Loading Message="Uploading File"/> )}
         { deleteloading && (<Loading Message="Deleting File"/> )}
         { model && (<UploadImagemodel setLoading={setLoading} setModel={setModel} project={props.project}/> )}
+        { modeldelete && (<DeleteFile setDeleteLoading={setDeleteLoading} setDeleteModel={setDeleteModel} name={filename} setFilename={setFilename} projectId={props.project.id}/>)}
         {props.project.files.length ? 
         (
             <div>
@@ -81,7 +70,7 @@ const Files = (props: Props) => {
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             <div className="flex items-center justify-center gap-1">
                                                 <a href={file.link} target="_blank"><button className="px-2 rounded-xl text-[white] bg-[green]">Download</button></a>
-                                                {props.project.Role !== "Member" && <button onClick={() => deletefilefunction(file.id)} className="px-2 rounded-xl text-[white] bg-[red]" >Delete</button>}
+                                                {props.project.Role !== "Member" && <button onClick={() => {setFilename(file.id);setDeleteModel(true)}} className="px-2 rounded-xl text-[white] bg-[red]" >Delete</button>}
                                             </div>
                                         </td>
                                     </tr>

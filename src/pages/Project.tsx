@@ -88,7 +88,7 @@ const Project = () => {
                         <p onClick={() => setPage("api")} className={`cursor-pointer ${page === "api" ? `font-bold text-primary underline` : ``}`}>Api</p>
                     </div>
                     { page === "files" && (<Files project={project} />)}
-                    { page === "contributors" && (<Contributors project={project} setPage={setPage}/>)}
+                    { page === "contributors" && (<Contributors project={project}/>)}
                     { page === "rules" && (<Guidelines />)}
                     { page === "api" && (<h1>Api</h1>)}
                 </div>

@@ -7,7 +7,6 @@ import { Shield, ShieldPlus, ShieldX } from "lucide-react";
 
 type Props = {
     project: projectwithrole
-    setPage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const Contibutors = (props: Props) => {
