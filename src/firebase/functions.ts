@@ -134,7 +134,7 @@ export const getProjects = async () => {
       
       const filteredProjectData = projectData.filter((data) => data !== null);
       localStorage.setItem("projects", JSON.stringify(filteredProjectData));
-      return projectData;
+      return JSON.parse(localStorage.getItem("projects") as string);
     }
   } catch (error) {
     console.error("Error fetching projects:", error);

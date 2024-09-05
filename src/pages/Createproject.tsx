@@ -47,7 +47,6 @@ const Createproject = () => {
     }
     Initailrender()
   }, []);
-  
   return (
     <div className="bg-background min-h-screen max-h-screen">
       {open && ( <Createnewproject setOpen={setOpen} setProjects={setProjects} projects={projects} /> )}
@@ -105,7 +104,7 @@ const Createproject = () => {
             </div>
             
             <div className=" bg-background gap-4 flex px-5 flex-wrap items-center justify-center sm:items-start sm:justify-start">
-              {projects.map((project, idx) => (
+              { projects.map((project, idx) => (
                 <a key={idx} href={`/project/${project.id}`}>
                   <div className="rounded-xl w-[320px] cursor-pointer bg-[white] shadow-lg w-70 pb-2.5">
                     <div className="relative h-36 rounded-xl">
