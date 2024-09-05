@@ -121,8 +121,8 @@ const Createproject = () => {
                       <p className="">
                         <span className="font-bold text-primary">Collaborators:</span> {project.users.length}
                       </p>
-                      <h2 className="my-2.5">
-                        <span className="text-xl font-extrabold text-primary">{project.limit.toFixed(2)}</span>/100MB ({(Number(project.limit.toFixed(2)) / 100) * 100}% used)
+                      <h2 className="my-2.5 text-xl">
+                        <span className="text-xl font-extrabold text-primary">{project.limit.toFixed(2)}MB</span> /50MB ({(Number(project.limit.toFixed(2)) / 50) * 100}% used)
                       </h2>
                       <span className="p-2 bg-background rounded-xl font-semibold text-primary">{project.users.length > 1 ? "Shared" : "Personal"}</span>
                     </div>

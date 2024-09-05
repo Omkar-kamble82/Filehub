@@ -78,6 +78,7 @@ export const createProjectFunction = async (name: string): Promise<void> => {
         await setDoc(doc(db, "projects", docId), {
           id: docId,
           name,
+          files: [],
           limit: 0.00,
           creator: user.displayName as string,
           creatorEmail: user.email as string,
@@ -329,3 +330,42 @@ export const deleteuser = async(memberemail: string, projectId: string) => {
     toast.error("Something went wrong!!")
   }
 }
+
+export const addImage = async(projectId:string, url:string, FT:string, name:string, limit: number) => {
+  try{
+    const date = new Date();
+    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const projectobject = {id: name, type: FT, dateadded: formattedDate, link: url}
+    const docRef = doc(db, "projects", projectId);
+    const docSnap = await getDoc(docRef);
+     if(docSnap.exists()){
+        const updatedprojects = docSnap.data().files
+        updatedprojects.push(projectobject)
+        console.log(projectobject)
+        await updateDoc(docRef, { 
+          files: updatedprojects,
+          limit: limit 
+        });
+    }
+    toast.success("File uploaded successfully")
+    await getProject(projectId)
+  } catch {
+    toast.error("Something went wrong!!")
+  }
+}
+
+export const copyToClipboard = (id: string) => {
+    const textElement = document.getElementById(id);
+    if (textElement) { // Check if the element exists
+      const textToCopy = textElement.innerText;
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          toast.success("Copy to clipboard");
+        })
+        .catch((err) => {
+          console.error('Failed to copy: ', err);
+        });
+    } else {
+      console.error('Element not found');
+    }
+};

@@ -68,7 +68,10 @@ const Project = () => {
             { project ? (
                 <div className="pt-[16vh] w-[96vw] mx-auto">
                     <span className="flex justify-between items-center">
-                        <h1 className="text-primary text-5xl font-bold">{project.name}</h1>
+                        <h1 className="text-primary text-5xl font-bold flex flex-col gap-2">
+                            {project.name}
+                            <span className="font-semibold text-lg">{project.limit >= 50 ? (<span className="text-[red]">Project Limit Exceeded</span>) : (<>Limit: {project.limit} /50MB</>)}</span>
+                        </h1>
                         <div className="flex item-center gap-2">
                             {project.Role === "Admin" && (<button onClick={() => setDeletemodel(true)} className="h-[40px] w-[35px] border-[1px] rounded-lg border-[#ff4d00fe] text-[#ff4d00fe] flex justify-center items-center">
                                 <Trash />
