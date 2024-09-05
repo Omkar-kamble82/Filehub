@@ -82,10 +82,12 @@ const Project = () => {
                         <p onClick={() => setPage("files")} className={`cursor-pointer ${page === "files" ? `font-bold text-primary underline` : ``}`}>Files</p>
                         <p onClick={() => setPage("contributors")} className={`cursor-pointer ${page === "contributors" ? `font-bold text-primary underline` : ``}`}>Contributor</p>
                         <p onClick={() => setPage("rules")} className={`cursor-pointer ${page === "rules" ? `font-bold text-primary underline` : ``}`}>Guidelines</p>
+                        <p onClick={() => setPage("api")} className={`cursor-pointer ${page === "api" ? `font-bold text-primary underline` : ``}`}>Api</p>
                     </div>
-                    { page === "files" && (<Files />)}
+                    { page === "files" && (<Files project={project} />)}
                     { page === "contributors" && (<Contributors project={project} setPage={setPage}/>)}
                     { page === "rules" && (<Guidelines />)}
+                    { page === "api" && (<h1>Api</h1>)}
                 </div>
             ) : 
             <div className="pt-[16vh] flex justify-center items-center">

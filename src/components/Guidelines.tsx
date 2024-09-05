@@ -5,7 +5,11 @@ const Guidelines = () => {
     <div className="h-[68vh] overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
         <p className="text-3xl text-primary text-center font-bold mt-[20px]">Guidelines</p>
         <div className="mt-[20px]">
-            <div className="text-xl flex gap-1 items-center"><span className="font-bold text-primary text-2xl flex gap-1 items-center">1.  </span> There are three roles for collaborators: <span className="font-bold text-primary text-2xl flex gap-1 items-center">Admin <ShieldX size={24}/></span>, <span className="font-bold text-primary text-2xl flex gap-1 items-center">Moderator <ShieldPlus size={18} /></span>, and <span className="font-bold text-primary text-2xl flex gap-1 items-center">Member <Shield size={15}/></span>.</div>
+            <div className="text-xl"><span className="font-bold text-primary text-2xl">1.  </span> There are three roles for collaborators: 
+              <div className="font-bold text-primary ml-[30px] text-2xl flex items-center gap-1 flex-wrap">
+                Admin <ShieldX size={24}/>, Moderator <ShieldPlus size={18} />, and Member <Shield size={15}/>.
+              </div>
+            </div>
             <p className="text-xl mt-[8px]"><span className="font-bold text-primary text-2xl">2.   Admin:</span> The Admin is the project creator and has the highest level of control. Admins can:</p>
             <div className="text-xl ml-[20px]">
                 <p><span className="font-bold text-primary text-2xl">2.a:</span> Delete the project.</p>

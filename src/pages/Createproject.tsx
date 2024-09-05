@@ -16,6 +16,12 @@ export type ProjectType = {
     username: string,
     Type: string,
   }],
+  files: [{
+    dateadded:string,
+    id:string,
+    link:string,
+    type:string,
+  }]
 }
 
 const Createproject = () => {
