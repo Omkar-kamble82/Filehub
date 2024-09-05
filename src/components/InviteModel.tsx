@@ -1,5 +1,4 @@
 import { CircleX, Copy } from "lucide-react"
-import toast from "react-hot-toast";
 import { copyToClipboard } from "../firebase/functions";
 
 type Props = {
