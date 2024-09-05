@@ -151,13 +151,21 @@ export const deleteProject = async (id: string) => {
       }
       const users = docSnap.data().users as user[]
       users.forEach(async (user) => {
-        const docRef = doc(db, "users", user.username);
+        const docRef = doc(db, "users", user.email);
         const docSnap = await getDoc(docRef);
         if (docSnap?.exists()) {
           const updatedProjects = docSnap?.data().projects.filter((project: userProject) => project.id!== id)
           await updateDoc(docRef, { projects: updatedProjects })
         }
       })
+      if(docSnap.exists()){
+        const filesarr: file[] = docSnap.data().files
+        filesarr.forEach((file)=> {
+          const storage = getStorage();
+          const desertRef = ref(storage, `Filehub/${file.id}`);
+          deleteObject(desertRef).then(() => {}).catch(() => {console.log("something went wrong")})
+        })
+      }
       await deleteDoc(docRef);
       toast.success("Project deleted successfully!!")
   } catch {
@@ -315,7 +323,6 @@ export const demote = async(memberemail: string, projectId: string) => {
 }
 
 export const deleteuser = async(memberemail: string, projectId: string) => {
-  console.log(memberemail, projectId)
   try{
     const docRef = doc(db, "users", memberemail);
     const docSnap = await getDoc(docRef);
