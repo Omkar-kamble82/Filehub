@@ -16,7 +16,7 @@ const Contibutors = (props: Props) => {
     const [email, setEmail] = useState("")
     
   return (
-    <div className="h-[63vh] sm:h-[65vh] bg-[white] rounded-xl mt-[8px] p-2">
+    <div className="h-[63vh] sm:h-[65vh] bg-[white] rounded-xl my-[8px] p-2">
         {model && <RolechangeModel setRolechangemodel={setModel} action={action} email={email} projectId={props.project.id}/>}
         
         <p className="text-3xl text-primary text-center font-bold mt-[20px]">Contributors</p>

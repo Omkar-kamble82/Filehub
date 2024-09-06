@@ -24,7 +24,7 @@ const Files = (props: Props) => {
         { deleteloading && (<Loading Message="Deleting File"/> )}
         { model && (<UploadImagemodel setLoading={setLoading} setModel={setModel} project={props.project}/> )}
         { modeldelete && (<DeleteFile setDeleteLoading={setDeleteLoading} setDeleteModel={setDeleteModel} name={filename} setFilename={setFilename} projectId={props.project.id}/>)}
-        {props.project.files.length ? 
+        { props.project.files.length ? 
         (
             <div>
                 <div className="flex justify-between sm:mx-[10px] items-center">
