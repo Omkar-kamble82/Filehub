@@ -16,3 +16,5 @@ app.get('/api/v1/getfiles/:userId/:projectId/:type', (req, res) => {
         type: type,
      });
 })
+
+module.exports = { app }
