@@ -1,10 +1,11 @@
-import express from "express";
+require('dotenv').config()
 
-const router = express.Router()
+const express = require('express')
+
 const app = express()
 
-app.listen(5000, () => {
-    console.log('listening for requests on port from backend', 5000)
+app.listen(process.env.PORT, () => {
+    console.log('listening for requests on port from backend', process.env.PORT)
 })
 
 app.get('/api/v1/getfiles/:userId/:projectId/:type', (req, res) => {
