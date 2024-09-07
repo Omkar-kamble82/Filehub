@@ -86,14 +86,14 @@ const Project = () => {
                     <div className="mt-[2vh] text-md sm:text-xl flex items-center gap-3">
                         <p onClick={() => setPage("files")} className={`cursor-pointer ${page === "files" ? `font-bold text-primary underline` : ``}`}>Files</p>
                         <p onClick={() => setPage("contributors")} className={`cursor-pointer ${page === "contributors" ? `font-bold text-primary underline` : ``}`}>Contributor</p>
-                        <p onClick={() => setPage("api")} className={`cursor-pointer ${page === "api" ? `font-bold text-primary underline` : ``}`}>Code</p>
                         <p onClick={() => setPage("trash")} className={`cursor-pointer ${page === "trash" ? `font-bold text-primary underline` : ``}`}>Trash</p>
+                        <p onClick={() => setPage("api")} className={`cursor-pointer ${page === "api" ? `font-bold text-primary underline` : ``}`}>Json</p>
                         <p onClick={() => setPage("rules")} className={`cursor-pointer ${page === "rules" ? `font-bold text-primary underline` : ``}`}>Guidelines</p>
                     </div>
                     { page === "files" && (<Files project={project} />)}
                     { page === "contributors" && (<Contributors project={project}/>)}
                     { page === "api" && (<h1><Codefiles project={project} /></h1>)}
-                    { page === "trash" && (<h1><Trashfile /></h1>)}
+                    { page === "trash" && (<h1><Trashfile project={project} /></h1>)}
                     { page === "rules" && (<Guidelines />)}
                 </div>
             ) : 

@@ -37,7 +37,7 @@ const UploadImagemodel = (props: Props) => {
             props.setModel(true)
             return
         }
-        const imageRef = ref(storage, `Filehub/${Uploadedfile.name}`);
+        const imageRef = ref(storage, `${props.project.id}/${Uploadedfile.name}`);
         await uploadBytes(imageRef, Uploadedfile).then((snapshot) => {
             getDownloadURL(snapshot.ref).then(async(url) => {
                 ImageUpload(url, Uploadedfile.type.split("/")[0], Uploadedfile.name, limit, size)

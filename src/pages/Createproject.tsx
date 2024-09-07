@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import { CirclePlus, Link } from 'lucide-react';
 import { useState, useEffect } from "react";
-import { getProjects } from "../firebase/functions";
+import { getProjects, Trashfile } from "../firebase/functions";
 import Loading from "../components/Loading";
 import Invite from "../components/Invite";
 import Createnewproject from "../components/Createnewproject";
@@ -23,6 +23,7 @@ export type ProjectType = {
     type:string,
     size: number
   }]
+  trash: Trashfile[]
 }
 
 const Createproject = () => {
@@ -122,7 +123,7 @@ const Createproject = () => {
                         <span className="font-bold text-primary">Collaborators:</span> {project.users.length}
                       </p>
                       <h2 className="my-2.5 text-xl">
-                        <span className="text-xl font-extrabold text-primary">{project.limit.toFixed(2)}MB</span> /50MB ({(Number(project.limit.toFixed(2)) / 50) * 100}% used)
+                        <span className="text-xl font-extrabold text-primary">{project.limit.toFixed(2)}MB</span> /50MB ({Number((Number(project.limit.toFixed(2)) / 50) *100).toFixed(2)}% used)
                       </h2>
                       <span className="p-2 bg-background rounded-xl font-semibold text-primary">{project.users.length > 1 ? "Shared" : "Personal"}</span>
                     </div>

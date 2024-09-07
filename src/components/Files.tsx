@@ -3,8 +3,10 @@ import { projectwithrole } from "../pages/Project";
 import { useState } from "react";
 import Loading from "./Loading";
 import UploadImagemodel from "./UploadImagemodel";
-import { copyToClipboard } from "../firebase/functions";
+import { moveToTrash } from "../firebase/functions";
 import DeleteFile from "./DeleteFile";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     project: projectwithrole
@@ -17,11 +19,33 @@ const Files = (props: Props) => {
     const [modeldelete, setDeleteModel] = useState(false)
     const [loading, setLoading] = useState(false)
     const [deleteloading, setDeleteLoading] = useState(false)
+    const navigate = useNavigate()
+
+    const copy = (data: string) => {
+        navigator.clipboard.writeText(data)
+        .then(() => {
+          toast.success("Copy to clipboard");
+        })
+        .catch((err) => {
+          console.error('Failed to copy: ', err);
+        });
+    }
+
+    const trash = async (projectId:string, fileId: string) => {
+        setDeleteLoading(true)
+        try{
+            await moveToTrash(projectId, fileId)
+            setDeleteLoading(false)
+            navigate(0)
+        } catch {
+            console.log("something went wrong")
+        }
+    }
 
   return (
     <div className="h-[63vh] sm:h-[65vh] shadow-xl overflow-x-auto mb-[10px] bg-[white] rounded-xl mt-[8px] p-2">
         { loading && (<Loading Message="Uploading File"/> )}
-        { deleteloading && (<Loading Message="Deleting File"/> )}
+        { deleteloading && (<Loading Message="Moving to trash"/> )}
         { model && (<UploadImagemodel setLoading={setLoading} setModel={setModel} project={props.project}/> )}
         { modeldelete && (<DeleteFile setDeleteLoading={setDeleteLoading} setDeleteModel={setDeleteModel} name={filename} setFilename={setFilename} projectId={props.project.id}/>)}
         { props.project.files.length ? 
@@ -58,7 +82,7 @@ const Files = (props: Props) => {
                                 {props.project.files.map((file, idx) =>
                                     <tr key={idx}>
                                         <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 truncate max-w-[100px]" title={file.id}>{file.id}</td>
-                                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 truncate max-w-[240px] cursor-pointer" id="filelink" onClick={() => {copyToClipboard("filelink")}} title={file.link}>{file.link}</td>
+                                        <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900 truncate max-w-[240px] cursor-pointer" id="filelink" onClick={() => {copy(file.link)}} title={file.link}>{file.link}</td>
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             {file.type === "video" && <span>Video</span>}
                                             {file.type === "application" && <span>Document</span>}
@@ -70,7 +94,7 @@ const Files = (props: Props) => {
                                         <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                             <div className="flex items-center justify-center gap-1">
                                                 <a href={file.link} target="_blank"><button className="px-2 rounded-xl text-[white] bg-[green]">Download</button></a>
-                                                {props.project.Role !== "Member" && <button onClick={() => {setFilename(file.id);setDeleteModel(true)}} className="px-2 rounded-xl text-[white] bg-[red]" >Delete</button>}
+                                                {props.project.Role !== "Member" && <button onClick={() => trash(props.project.id, file.id)} className="px-2 rounded-xl text-[white] bg-[orange]">Move to Trash</button>}
                                             </div>
                                         </td>
                                     </tr>

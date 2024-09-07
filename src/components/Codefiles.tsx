@@ -87,7 +87,7 @@ const Codefiles = (props: Props) => {
   return (
     <div className="h-[63vh] sm:h-[65vh] bg-[white] rounded-xl my-[8px] p-2">
         <p className="text-3xl text-primary text-center font-bold mt-[20px]">Code</p>
-        {data.length ?
+        {props.project.files ?
             (
                 <>
                     <div className='flex justify-between item-center'>
@@ -98,13 +98,23 @@ const Codefiles = (props: Props) => {
                             <option value="vid">Video Files</option>
                             <option value="aud">Audio Files</option>
                         </select>
-                        <button onClick={handleClick} className='text-[15px] sm:text-lg flex items-center p-2  sm:gap-1 bg-[green] text-[white] font-bold rounded-lg'> <Link size={20}/>copy code</button>
+                        {
+                        data.length ? (
+                            <button onClick={handleClick} className='text-[15px] sm:text-lg flex items-center p-2  sm:gap-1 bg-[green] text-[white] font-bold rounded-lg'> <Link size={20}/>copy json</button>
+                            ) : (
+                            <></>
+                            )
+                        }
                     </div>
-                    <div className='h-[45vh] sm:h-[48vh] xl:h-[42vh] rounded-xl mt-[10px] overflow-scroll'>
+                    {data.length ? 
+                    (<div className='h-[45vh] sm:h-[48vh] xl:h-[42vh] rounded-xl mt-[10px] overflow-scroll'>
                         <SyntaxHighlighter language="json" style={docco}>
                             {JSON.stringify(data, null, 2)}
                         </SyntaxHighlighter>
-                    </div>
+                    </div>)
+                    :
+                    (<></>)
+                    }
                 </>
             ) : (
                 <div className='flex justify-center mt-[15px] rounded-xl items-center h-[48vh] bg-[#eee]'>
