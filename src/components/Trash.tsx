@@ -78,7 +78,7 @@ const Trashfile = (props: Props) => {
                                   <td className="whitespace-nowrap px-4 py-2 text-gray-700">
                                       <div className="flex items-center justify-center gap-1">
                                           <a href={file.file[0].link} target="_blank"><button className="px-2 rounded-xl text-[white] bg-[green]">Download</button></a>
-                                          <button className="px-2 rounded-xl text-[white] bg-[orange]" onClick={() => restore(props.project.id, file.file[0].id)}>Restore</button>
+                                          {props.project.Role !== "Member" && <button className="px-2 rounded-xl text-[white] bg-[orange]" onClick={() => restore(props.project.id, file.file[0].id)}>Restore</button>}
                                           {props.project.Role !== "Member" && <button onClick={() => {setFilename(file.file[0].id);setDeleteModel(true)}} className="px-2 rounded-xl text-[white] bg-[red]" >Delete</button>}
                                       </div>
                                   </td>
