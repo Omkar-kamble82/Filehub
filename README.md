@@ -1,50 +1,58 @@
-# React + TypeScript + Vite
+# FileHub: Collaborative File Storage Service Application: React.js, Firebase, Firebase-Auth, Firestore Database,  Tailwind.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+<a href="https://filehub-gamma.vercel.app/">FileHub </a> is a full-stack file storage service application that allows users to collaborate on projects and share files. It features an authorization system, where users have different roles and varying levels of access. Users can join projects through shared links and gain access to the files associated with those projects.
+<br/>
+<br/>
+<img src="https://github.com/user-attachments/assets/5d6b6a4e-a0a8-487e-b2b6-c2d0d3df85f1" width="450px"/>
+<img src="https://github.com/user-attachments/assets/26f6a202-833c-4d86-901e-54c3774ba2e7" width="450px"/>
+![image](https://github.com/user-attachments/assets/1215e66e-70ea-419d-aeba-da51817da691)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<h2>Key Features:</h2>
 
-## Expanding the ESLint configuration
+- Collaborative File Storage Service Application
+- Multimedia Upload ( Includind Video, Image, Audio, Files )
+- Firebase services (includeing Auth, Storage, Database)
+- Role Based Authorization
+- Hosting using Vecel
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Cloning the repository
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```shell
+git clone https://github.com/Omkar-kamble82/Filehub.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Install packages
+
+```shell
+npm i
+```
+
+### Setup .env file
+
 
 ```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+VITE_API_KEY=
+VITE_AUTH_DOMAIN=
+VITE_PROJECT_ID=
+VITE_STORAGE_BUCKET=
+VITE_MESSAGING_SENDER_ID=
+VITE_APP_ID=
+VITE_RESEND_KEY=
 ```
+
+
+### Start the app
+
+```shell
+npm run dev
+```
+
+
+## Available commands
+
+Running commands with npm `npm run [command]`
+
+| command         | description                              |
+| :-------------- | :--------------------------------------- |
+| `dev`           | Starts a development instance of the app |
