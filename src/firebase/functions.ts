@@ -138,6 +138,9 @@ export const getProjects = async () => {
       );
       
       const filteredProjectData = projectData.filter((data) => data !== null);
+      filteredProjectData.forEach(async(projectData) => {
+        await getProject(projectData.id)
+      })
       localStorage.setItem("projects", JSON.stringify(filteredProjectData));
       return JSON.parse(localStorage.getItem("projects") as string);
     }
@@ -257,22 +260,20 @@ export const getProject = async (id: string) => {
   let project = docSnap.data()
   const trash: Trashfile[] = docSnap.data().trash
   trash.forEach(t => {
-    if(been30days(t.file[0].dateadded)) {
+    if(been30days(t.deletedate)) {
       const storage = getStorage();
       const desertRef = ref(storage, `${id}/${t.file[0].id}`);
       deleteObject(desertRef).then(() => {
       }).catch(() => {
       });
-      console.log(t.file[0].id)
     }
   })
-  const updatedtrash = trash.filter(t => !been30days(t.file[0].dateadded))
-  const deletedtrash = trash.filter(t => been30days(t.file[0].dateadded))
+  const updatedtrash = trash.filter(t => !been30days(t.deletedate))
+  const deletedtrash = trash.filter(t => been30days(t.deletedate))
 
   let limit = docSnap.data().limit
   deletedtrash.map(tr => {
     limit -= tr.file[0].size
-    console.log(limit)
   })
 
   await updateDoc(docRef, { 
@@ -309,7 +310,7 @@ export const been30days = (dateadded: string) => {
   const currentDate = new Date();
   const timeDifference = currentDate.getTime() - addedDate.getTime();
   const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return daysDifference >= 1
+  return daysDifference >= 15
 }
 
 export const promote = async(memberemail: string, projectId: string) => {
@@ -511,6 +512,34 @@ export const resortFile = async(projectId: string, fileId: string) => {
       await getProject(projectId)
       toast.success("File resorted successfully")
     }
+  } catch {
+    toast.error("Something went wrong")
+  }
+}
+
+export const clearTrash = async (projectId: string) => {
+  try {
+    const docRef = doc(db, "projects", projectId);
+    const docSnap = await getDoc(docRef);
+    if(docSnap.exists()){
+      const trash: Trashfile[] = docSnap.data().trash 
+      let limit: number = docSnap.data().limit
+      trash.forEach(trashFile => {
+        const storage = getStorage();
+        const desertRef = ref(storage, `${projectId}/${trashFile.file[0].id}`);
+        console.log(``)
+        deleteObject(desertRef).then(() => {
+        }).catch(() => {
+          console.log("something went wrong")
+        });
+        limit -= trashFile.file[0].size
+      })
+      await updateDoc(docRef, { 
+          trash: [], 
+          limit: limit
+      });
+    }
+    await getProject(projectId)
   } catch {
     toast.error("Something went wrong")
   }

@@ -3,8 +3,9 @@ import { projectwithrole } from "../pages/Project"
 import { useState } from "react"
 import DeleteFile from "./DeleteFile"
 import Loading from "./Loading"
-import { resortFile } from "../firebase/functions"
+import { clearTrash, resortFile } from "../firebase/functions"
 import { useNavigate } from "react-router-dom"
+import { CircleX, Trash } from "lucide-react"
 
 type Props = {
   project: projectwithrole
@@ -17,6 +18,9 @@ const Trashfile = (props: Props) => {
   const [deleteloading, setDeleteLoading] = useState(false)
   const [restoreloading, setRestoreLoading] = useState(false)
 
+  const [clearmodel,setClearModel] = useState(false)
+  const [clearloading, setClearLoading] = useState(false)
+
   const navigate = useNavigate()
 
   const copy = (data: string) => {
@@ -27,6 +31,20 @@ const Trashfile = (props: Props) => {
     .catch((err) => {
       console.error('Failed to copy: ', err);
     });
+  }
+
+  const ClearTrash = async () => {
+    try {
+      setClearModel(false);
+      setClearLoading(true);
+      await clearTrash(props.project.id)
+      navigate(0)
+      toast.success("Trash cleared successfully")
+      setClearLoading(false)
+
+    } catch {
+      console.log("Something went wrong")
+    }
   }
 
   const restore = async (projectId: string, fileId: string) => {
@@ -42,14 +60,41 @@ const Trashfile = (props: Props) => {
 
   return (
     <div className="h-[63vh] sm:h-[65vh] bg-[white] rounded-xl mt-[8px] p-2">
-        <p className="text-3xl text-primary text-center font-bold mt-[20px]">Trash file</p>
         { deleteloading && (<Loading Message="Deleting File"/> )}
+        { clearloading && (<Loading Message="Clearing Trash"/> )}
         { restoreloading && (<Loading Message="Restoring File"/> )}
+        { clearmodel && (
+          <div className="h-full w-full flex items-center justify-center fixed inset-0 backdrop-filter backdrop-blur-lg z-50">
+          <div className="bg-[white] relative rounded-xl shadow-xl flex flex-col justify-center items-center px-5 w-88 sm:w-96 h-40">
+              <button className="absolute top-2.5 right-2.5" onClick={() => setClearModel(false)}>
+                  <CircleX className="text-[red]" />
+              </button>
+              <p className="font-semibold text-[15px] mb-[5px]">This would permenantly delete all files in the trash?</p>
+              <button
+                  onClick={ClearTrash}
+                  className="rounded-md flex gap-2 items-center justify-center text-[white] bg-[red] px-6 py-2 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
+              >
+                <Trash/>
+                  Confirm Clear Trash
+            </button>
+            </div>
+            </div>
+        )}
         { modeldelete && (<DeleteFile setDeleteLoading={setDeleteLoading} setDeleteModel={setDeleteModel} name={filename} setFilename={setFilename} projectId={props.project.id}/>)}
         { props.project.trash.length ? 
         (
-          <div className="mt-[20px]">
-            <p className="text-sm text-[#ff612c] mt-[10px] ml-[10px]">*Trash files will be retained for up to 30 days.</p>
+          <div className="">
+            <div className="flex justify-between items-center mt-[20px] sm:mx-[10px]">
+              <p className="text-3xl text-primary text-center font-bold ">Trash file</p>
+              <button
+                  onClick={() => setClearModel(true)}
+                  className="rounded-md flex gap-2 items-center justify-center text-[white] bg-[red] px-6 py-2 text-lg font-semibold hover:opacity-90 transition-all duration-700 disabled:opacity-50"
+              >
+                <Trash/>
+                  Clear Trash
+            </button>
+            </div>
+            <p className="text-sm text-[#ff612c] mt-[10px] ml-[10px]">*Trash files will be retained for up to 15 days.</p>
               <div className="overflow-x-auto">
                   <table className="min-w-full text-center divide-y-2 divide-gray-200 bg-white text-sm">
                       <thead className="ltr:text-left rtl:text-right">
@@ -91,7 +136,7 @@ const Trashfile = (props: Props) => {
             )
             :
             (<div className="flex justify-center items-center h-full">
-              <div className="h-[240px] w-[300px] rounded-xl flex flex-col items-center">
+              <div className="rounded-xl flex flex-co justify-centerl items-center">
                   <h1 className="text-4xl font-bold text-primary text-center">No files in Trash.</h1>
               </div>
               </div>
